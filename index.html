@@ -710,7 +710,7 @@
                 }, 200 + index * 120);
             });
 
-            // PDF generation (with name fix)
+            // PDF generation
             document.getElementById('downloadPdfBtn').addEventListener('click', function() {
                 const btn = this;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
@@ -719,18 +719,16 @@
                 const resume = document.getElementById('resume');
                 const nameElement = document.getElementById('mainName');
 
-                // --- FIX: Temporarily change the name to a dark color for PDF ---
                 // Store original styles
                 const originalBackground = nameElement.style.background;
                 const originalWebkitFill = nameElement.style.webkitTextFillColor;
                 const originalColor = nameElement.style.color;
 
-                // Apply solid dark color (visible on white background)
+                // --- TEMPORARILY CHANGE NAME TO BRIGHT CYAN FOR VISIBILITY ON WHITE PDF ---
                 nameElement.style.background = 'none';
-                nameElement.style.webkitTextFillColor = '#0a1628'; // dark navy
-                nameElement.style.color = '#0a1628';
+                nameElement.style.webkitTextFillColor = '#00d4ff'; // bright cyan, clearly visible on white
+                nameElement.style.color = '#00d4ff';
 
-                // Wait a tiny bit for the style to apply, then capture
                 setTimeout(() => {
                     html2canvas(resume, {
                         scale: 3,
@@ -743,7 +741,7 @@
                         windowWidth: resume.scrollWidth,
                         windowHeight: resume.scrollHeight,
                     }).then(canvas => {
-                        // Revert name styles back to gradient
+                        // Revert to original gradient
                         nameElement.style.background = originalBackground || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
@@ -777,7 +775,7 @@
                         btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
                         btn.disabled = false;
                     }).catch(error => {
-                        // Revert styles even if error occurs
+                        // Revert styles on error
                         nameElement.style.background = originalBackground || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
@@ -787,7 +785,7 @@
                         btn.disabled = false;
                         alert('Could not generate PDF. Please try using the print option (Ctrl+P) and set scale to 47%.');
                     });
-                }, 100); // small delay for style update
+                }, 100);
             });
         });
     </script>
