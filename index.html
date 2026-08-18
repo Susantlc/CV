@@ -6,6 +6,9 @@
     <title>Susant Lamichhane - Cybersecurity Professional</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Libraries for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         /* ===== RESET & BASE ===== */
         * {
@@ -486,7 +489,7 @@
             .stat-card .number { font-size: 22px; }
         }
 
-        /* ===== PRINT ===== */
+        /* ===== PRINT STYLES (fallback) ===== */
         @media print {
             body { background: #fff; padding: 0; }
             .resume { box-shadow: none; border: 1px solid #ddd; border-radius: 0; }
@@ -497,7 +500,7 @@
             .skill-bar .fill { background: #333; }
         }
 
-        /* ===== FLOATING DOWNLOAD ===== */
+        /* ===== FLOATING DOWNLOAD BUTTON ===== */
         .download-btn {
             position: fixed;
             bottom: 30px;
@@ -537,7 +540,6 @@
         <aside class="sidebar">
             <div class="profile-header">
                 <div class="avatar">
-                    <!-- ★★★ YOUR PHOTO (photo.png) ★★★ -->
                     <img src="photo.png" alt="Susant Lamichhane">
                 </div>
                 <h1>Susant Lamichhane</h1>
@@ -554,7 +556,6 @@
                 <a href="tel:+9779841512205" class="contact-item">
                     <i class="fas fa-phone"></i> +977 9841512205
                 </a>
-                <!-- ★★★ CORRECT LinkedIn LINK ★★★ -->
                 <a href="https://www.linkedin.com/in/susant-lamichhane-4a8828234/" target="_blank" class="contact-item">
                     <i class="fab fa-linkedin"></i> linkedin.com/in/susant-lamichhane-4a8828234
                 </a>
@@ -731,7 +732,7 @@
     </div>
 
     <!-- ===== FLOATING DOWNLOAD BUTTON ===== -->
-    <button class="download-btn" onclick="window.print()">
+    <button class="download-btn" id="downloadPdfBtn">
         <i class="fas fa-file-pdf"></i> Download PDF
     </button>
 
@@ -746,16 +747,60 @@
             });
         });
 
-        // Smooth hover for stat cards
-        document.querySelectorAll('.stat-card').forEach(card => {
-            card.addEventListener('mouseenter', function() {
-                this.style.borderColor = '#00d4ff';
-            });
-            card.addEventListener('mouseleave', function() {
-                this.style.borderColor = 'var(--glass-border)';
+        // PDF generation
+        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+            const btn = this;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+            btn.disabled = true;
+
+            const resume = document.getElementById('resume');
+
+            html2canvas(resume, {
+                scale: 2,               // high quality
+                backgroundColor: '#ffffff',
+                allowTaint: false,
+                useCORS: true,
+                logging: false,
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const { jsPDF } = window.jspdf;
+
+                // PDF dimensions: A4 (595.28 x 841.89 points)
+                const pdf = new jsPDF('p', 'pt', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                // Calculate image aspect ratio
+                const imgWidth = canvas.width;
+                const imgHeight = canvas.height;
+                const ratio = imgWidth / imgHeight;
+
+                // Fit image to page width or height, whichever is smaller
+                let finalWidth = pdfWidth;
+                let finalHeight = pdfWidth / ratio;
+
+                // If height exceeds page height, fit to height
+                if (finalHeight > pdfHeight) {
+                    finalHeight = pdfHeight;
+                    finalWidth = pdfHeight * ratio;
+                }
+
+                // Center the image on the page
+                const xOffset = (pdfWidth - finalWidth) / 2;
+                const yOffset = (pdfHeight - finalHeight) / 2;
+
+                pdf.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight);
+                pdf.save('Susant_Lamichhane_Resume.pdf');
+
+                btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                btn.disabled = false;
+            }).catch(error => {
+                console.error('PDF generation failed:', error);
+                btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                btn.disabled = false;
+                alert('Could not generate PDF. Please try the print option instead (Ctrl+P).');
             });
         });
     </script>
-
 </body>
 </html>
