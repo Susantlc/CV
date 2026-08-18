@@ -6,7 +6,6 @@
     <title>Susant Lamichhane - Cybersecurity Professional</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Libraries for high-quality PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
@@ -521,7 +520,7 @@
                 <div class="avatar">
                     <img src="photo.png" alt="Susant Lamichhane">
                 </div>
-                <h1>Susant Lamichhane</h1>
+                <h1 id="mainName">Susant Lamichhane</h1>
                 <div class="title">MSc IT &amp; Applied Security</div>
                 <div class="location"><i class="fas fa-map-pin"></i> Kathmandu, Nepal</div>
             </div>
@@ -711,66 +710,84 @@
                 }, 200 + index * 120);
             });
 
-            // PDF generation (high quality, PNG, single page)
+            // PDF generation (with name fix)
             document.getElementById('downloadPdfBtn').addEventListener('click', function() {
                 const btn = this;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
                 btn.disabled = true;
 
                 const resume = document.getElementById('resume');
+                const nameElement = document.getElementById('mainName');
 
-                html2canvas(resume, {
-                    scale: 3,               // high resolution (crisp text)
-                    backgroundColor: '#ffffff',
-                    allowTaint: false,
-                    useCORS: true,
-                    logging: false,
-                    width: resume.scrollWidth,
-                    height: resume.scrollHeight,
-                    windowWidth: resume.scrollWidth,
-                    windowHeight: resume.scrollHeight,
-                }).then(canvas => {
-                    // Use PNG format (lossless, preserves colours and text)
-                    const imgData = canvas.toDataURL('image/png');
-                    const { jsPDF } = window.jspdf;
+                // --- FIX: Temporarily change the name to a dark color for PDF ---
+                // Store original styles
+                const originalBackground = nameElement.style.background;
+                const originalWebkitFill = nameElement.style.webkitTextFillColor;
+                const originalColor = nameElement.style.color;
 
-                    // A4 dimensions in points (595.28 x 841.89)
-                    const pdf = new jsPDF('p', 'pt', 'a4');
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = pdf.internal.pageSize.getHeight();
+                // Apply solid dark color (visible on white background)
+                nameElement.style.background = 'none';
+                nameElement.style.webkitTextFillColor = '#0a1628'; // dark navy
+                nameElement.style.color = '#0a1628';
 
-                    // Calculate the aspect ratio
-                    const imgWidth = canvas.width;
-                    const imgHeight = canvas.height;
-                    const ratio = imgWidth / imgHeight;
+                // Wait a tiny bit for the style to apply, then capture
+                setTimeout(() => {
+                    html2canvas(resume, {
+                        scale: 3,
+                        backgroundColor: '#ffffff',
+                        allowTaint: false,
+                        useCORS: true,
+                        logging: false,
+                        width: resume.scrollWidth,
+                        height: resume.scrollHeight,
+                        windowWidth: resume.scrollWidth,
+                        windowHeight: resume.scrollHeight,
+                    }).then(canvas => {
+                        // Revert name styles back to gradient
+                        nameElement.style.background = originalBackground || '';
+                        nameElement.style.webkitTextFillColor = originalWebkitFill || '';
+                        nameElement.style.color = originalColor || '';
 
-                    // Fit the image exactly within the page (no margins)
-                    let finalWidth, finalHeight;
-                    if (ratio > pdfWidth / pdfHeight) {
-                        // Image is wider than page: fit to width
-                        finalWidth = pdfWidth;
-                        finalHeight = pdfWidth / ratio;
-                    } else {
-                        // Image is taller: fit to height
-                        finalHeight = pdfHeight;
-                        finalWidth = pdfHeight * ratio;
-                    }
+                        const imgData = canvas.toDataURL('image/png');
+                        const { jsPDF } = window.jspdf;
 
-                    // Center the image horizontally and vertically
-                    const xOffset = (pdfWidth - finalWidth) / 2;
-                    const yOffset = (pdfHeight - finalHeight) / 2;
+                        const pdf = new jsPDF('p', 'pt', 'a4');
+                        const pdfWidth = pdf.internal.pageSize.getWidth();
+                        const pdfHeight = pdf.internal.pageSize.getHeight();
 
-                    pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
-                    pdf.save('Susant_Lamichhane_Resume.pdf');
+                        const imgWidth = canvas.width;
+                        const imgHeight = canvas.height;
+                        const ratio = imgWidth / imgHeight;
 
-                    btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
-                    btn.disabled = false;
-                }).catch(error => {
-                    console.error('PDF generation failed:', error);
-                    btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
-                    btn.disabled = false;
-                    alert('Could not generate PDF. Please try using the print option (Ctrl+P) and set scale to 47% to fit on one page.');
-                });
+                        let finalWidth, finalHeight;
+                        if (ratio > pdfWidth / pdfHeight) {
+                            finalWidth = pdfWidth;
+                            finalHeight = pdfWidth / ratio;
+                        } else {
+                            finalHeight = pdfHeight;
+                            finalWidth = pdfHeight * ratio;
+                        }
+
+                        const xOffset = (pdfWidth - finalWidth) / 2;
+                        const yOffset = (pdfHeight - finalHeight) / 2;
+
+                        pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+                        pdf.save('Susant_Lamichhane_Resume.pdf');
+
+                        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                        btn.disabled = false;
+                    }).catch(error => {
+                        // Revert styles even if error occurs
+                        nameElement.style.background = originalBackground || '';
+                        nameElement.style.webkitTextFillColor = originalWebkitFill || '';
+                        nameElement.style.color = originalColor || '';
+
+                        console.error('PDF generation failed:', error);
+                        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                        btn.disabled = false;
+                        alert('Could not generate PDF. Please try using the print option (Ctrl+P) and set scale to 47%.');
+                    });
+                }, 100); // small delay for style update
             });
         });
     </script>
