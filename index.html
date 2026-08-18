@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Susant Lamichhane - Cybersecurity Professional</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0a1628;
+            --secondary: #1a2a4a;
+            --accent: #00d4ff;
+            --accent2: #7c3aed;
+            --text-light: #e8edf5;
+            --text-muted: #94a3b8;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--primary);
+            color: var(--text-light);
+            line-height: 1.7;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 30px 20px;
+            background-image: 
+                radial-gradient(ellipse at 10% 20%, rgba(0, 212, 255, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 90% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
+        }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--primary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+        /* ===== MAIN CONTAINER ===== */
+        .resume {
+            max-width: 1200px;
+            width: 100%;
+            background: var(--secondary);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.05);
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            backdrop-filter: blur(20px);
+            position: relative;
+        }
+
+        .resume::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.08), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            background: rgba(10, 22, 40, 0.8);
+            padding: 40px 28px;
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--glass-border);
+            position: relative;
+            z-index: 1;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 3px solid var(--accent);
+            padding: 4px;
+            margin: 0 auto 18px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            box-shadow: 0 0 40px rgba(0, 212, 255, 0.2);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--primary);
+        }
+
+        .profile-header h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 30%, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+        }
+
+        .profile-header .title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            -webkit-text-fill-color: var(--accent);
+        }
+
+        .profile-header .location {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 6px;
+        }
+
+        .profile-header .location i {
+            color: var(--accent);
+            margin-right: 6px;
+        }
+
+        /* ===== SIDEBAR SECTIONS ===== */
+        .sidebar-section {
+            margin-bottom: 28px;
+        }
+
+        .sidebar-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 14px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 8px;
+        }
+
+        .sidebar-section h3 i {
+            margin-right: 8px;
+            font-size: 13px;
+        }
+
+        /* Contact */
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 13px;
+            color: var(--text-light);
+            text-decoration: none;
+            transition: 0.3s;
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+
+        .contact-item:hover {
+            background: var(--glass-bg);
+            color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .contact-item i {
+            width: 20px;
+            color: var(--accent);
+            font-size: 14px;
+        }
+
+        /* Skills */
+        .skill-group {
+            margin-bottom: 14px;
+        }
+
+        .skill-group .skill-label {
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .skill-bar {
+            width: 100%;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .skill-bar .fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transition: width 1s ease;
+            width: 0%;
+        }
+
+        .skill-bar .fill.animated {
+            width: var(--width);
+        }
+
+        /* Languages */
+        .lang-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .lang-item .level {
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* Interests */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tags span {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--text-light);
+            transition: 0.3s;
+        }
+
+        .tags span:hover {
+            background: var(--accent);
+            color: var(--primary);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.25);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            padding: 40px 44px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-section {
+            margin-bottom: 36px;
+        }
+
+        .main-section:last-child { margin-bottom: 0; }
+
+        .main-section h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .main-section h2 i {
+            font-size: 18px;
+        }
+
+        .main-section h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        /* Summary */
+        .summary-text {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.8;
+            padding: 18px 24px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .summary-text strong {
+            color: var(--accent);
+        }
+
+        /* Experience */
+        .exp-item {
+            padding: 20px 24px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--glass-border);
+            transition: 0.3s;
+        }
+
+        .exp-item:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .exp-item .exp-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .exp-item .exp-header h3 {
+            font-size: 17px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .exp-item .exp-header .company {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .exp-item .date {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.12);
+            padding: 2px 14px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        .exp-item ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .exp-item ul li {
+            font-size: 14px;
+            color: var(--text-light);
+            padding: 4px 0;
+            padding-left: 22px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .exp-item ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Education */
+        .edu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px 20px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .edu-item .edu-left h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .edu-item .edu-left .school {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .edu-item .edu-left .desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .edu-item .edu-date {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 500;
+            background: rgba(0, 212, 255, 0.12);
+            padding: 2px 14px;
+            border-radius: 20px;
+            white-space: nowrap;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px 16px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .stat-card .number {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .resume {
+                grid-template-columns: 1fr;
+                border-radius: 20px;
+            }
+            .sidebar {
+                border-right: none;
+                border-bottom: 1px solid var(--glass-border);
+                padding: 30px 24px;
+            }
+            .main {
+                padding: 30px 24px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .resume { border-radius: 16px; }
+            .sidebar { padding: 24px 18px; }
+            .main { padding: 24px 18px; }
+            .exp-item { padding: 16px; }
+            .exp-item .exp-header { flex-direction: column; }
+            .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+            .stat-card .number { font-size: 22px; }
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            body { background: #fff; padding: 0; }
+            .resume { box-shadow: none; border: 1px solid #ddd; border-radius: 0; }
+            .sidebar { background: #f5f7fa; }
+            .stat-card:hover, .exp-item:hover, .tags span:hover { transform: none !important; }
+            .tags span { background: #eee; border-color: #ddd; color: #333; }
+            .avatar { border-color: #333; }
+            .skill-bar .fill { background: #333; }
+        }
+
+        /* ===== FLOATING DOWNLOAD ===== */
+        .download-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: #fff;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.35);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 212, 255, 0.5);
+        }
+
+        @media print {
+            .download-btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="resume" id="resume">
+        <!-- ===== SIDEBAR ===== -->
+        <aside class="sidebar">
+            <div class="profile-header">
+                <div class="avatar">
+                    <img src="https://ui-avatars.com/api/?name=Susant+Lamichhane&size=140&background=0a1628&color=00d4ff&bold=true" alt="Susant Lamichhane">
+                </div>
+                <h1>Susant Lamichhane</h1>
+                <div class="title">MSc IT &amp; Applied Security</div>
+                <div class="location"><i class="fas fa-map-pin"></i> Kathmandu, Nepal</div>
+            </div>
+
+            <!-- Contact -->
+            <div class="sidebar-section">
+                <h3><i class="fas fa-address-card"></i> Contact</h3>
+                <a href="mailto:lamichhanesusant7@gmail.com" class="contact-item">
+                    <i class="fas fa-envelope"></i> lamichhanesusant7@gmail.com
+                </a>
+                <a href="tel:+9779841512205" class="contact-item">
+                    <i class="fas fa-phone"></i> +977 9841512205
+                </a>
+                <a href="#" class="contact-item">
+                    <i class="fab fa-linkedin"></i> linkedin.com/in/susantlamichhane
+                </a>
+                <a href="#" class="contact-item">
+                    <i class="fab fa-github"></i> github.com/susantlam
+                </a>
+                <a href="#" class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i> Jorpati, Kathmandu
+                </a>
+            </div>
+
+            <!-- Skills -->
+            <div class="sidebar-section">
+                <h3><i class="fas fa-code"></i> Core Competencies</h3>
+                <div class="skill-group">
+                    <div class="skill-label"><span>Vulnerability Assessment</span><span>95%</span></div>
+                    <div class="skill-bar"><div class="fill animated" style="--width:95%"></div></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-label"><span>Network Security</span><span>90%</span></div>
+                    <div class="skill-bar"><div class="fill animated" style="--width:90%"></div></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-label"><span>AI / ML for Security</span><span>88%</span></div>
+                    <div class="skill-bar"><div class="fill animated" style="--width:88%"></div></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-label"><span>Ethical Hacking</span><span>85%</span></div>
+                    <div class="skill-bar"><div class="fill animated" style="--width:85%"></div></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-label"><span>Cloud Security (AWS)</span><span>82%</span></div>
+                    <div class="skill-bar"><div class="fill animated" style="--width:82%"></div></div>
+                </div>
+                <div class="skill-group">
+                    <div class="skill-label"><span>Python / Automation</span><span>88%</span></div>
+                    <div class="skill-bar"><div class="fill animated" style="--width:88%"></div></div>
+                </div>
+            </div>
+
+            <!-- Languages -->
+            <div class="sidebar-section">
+                <h3><i class="fas fa-language"></i> Languages</h3>
+                <div class="lang-item"><span>English</span><span class="level">Professional Working</span></div>
+                <div class="lang-item"><span>Nepali</span><span class="level">Native</span></div>
+                <div class="lang-item"><span>Hindi</span><span class="level">Conversational</span></div>
+            </div>
+
+            <!-- Interests -->
+            <div class="sidebar-section">
+                <h3><i class="fas fa-heart"></i> Professional Interests</h3>
+                <div class="tags">
+                    <span>🔐 Cybersecurity</span>
+                    <span>🤖 AI/ML</span>
+                    <span>☁️ Cloud</span>
+                    <span>🛡️ Pen Testing</span>
+                    <span>📊 Threat Intel</span>
+                    <span>🏔️ Hiking</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main">
+
+            <!-- Professional Summary -->
+            <section class="main-section">
+                <h2><i class="fas fa-user-graduate"></i> Professional Summary</h2>
+                <div class="summary-text">
+                    <strong>Cybersecurity professional</strong> and MSc IT &amp; Applied Security candidate with a proven track record in <strong>vulnerability assessment, network security, and AI-driven threat detection</strong>. 
+                    Skilled at identifying critical vulnerabilities and collaborating with cross-functional teams to reduce security exposure. 
+                    Passionate about leveraging <strong>machine learning</strong> to build intelligent security solutions. 
+                    Seeking a role where I can drive <strong>security innovation</strong> and protect organizational assets.
+                </div>
+            </section>
+
+            <!-- Experience -->
+            <section class="main-section">
+                <h2><i class="fas fa-briefcase"></i> Professional Experience</h2>
+
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <div>
+                            <h3>Security Analyst Intern</h3>
+                            <div class="company">Cynical Technology</div>
+                        </div>
+                        <span class="date">Dec 2023 – Mar 2024</span>
+                    </div>
+                    <ul>
+                        <li>Identified <strong>15+ critical vulnerabilities</strong> across client infrastructures, reducing overall security exposure by <strong>30%</strong>.</li>
+                        <li>Collaborated with development teams to prioritize and remediate high-risk findings, ensuring compliance with security best practices.</li>
+                        <li>Authored detailed security assessment reports and presented actionable recommendations to stakeholders.</li>
+                    </ul>
+                </div>
+
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <div>
+                            <h3>Junior IT Support</h3>
+                            <div class="company">Kavya Academy</div>
+                        </div>
+                        <span class="date">Dec 2024 – Jan 2025</span>
+                    </div>
+                    <ul>
+                        <li>Diagnosed and resolved <strong>50+ IT issues</strong> for faculty, staff, and students, ensuring minimal downtime and high user satisfaction.</li>
+                        <li>Delivered IT curriculum to <strong>60+ students</strong>, covering foundational networking and system administration concepts.</li>
+                        <li>Provided dedicated support for the Animation Department and maintained comprehensive IT documentation.</li>
+                    </ul>
+                </div>
+
+                <div class="exp-item">
+                    <div class="exp-header">
+                        <div>
+                            <h3>IT Support Intern</h3>
+                            <div class="company">Islington College</div>
+                        </div>
+                        <span class="date">Nov 2022 – Jan 2023</span>
+                    </div>
+                    <ul>
+                        <li>Provided tier-1/2 support for <strong>200+ users</strong>, resolving hardware, software, and network issues efficiently.</li>
+                        <li>Ensured data integrity through regular system checks and backup procedures.</li>
+                        <li>Configured and deployed workstations, maintaining inventory and asset records.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Education -->
+            <section class="main-section">
+                <h2><i class="fas fa-graduation-cap"></i> Education</h2>
+
+                <div class="edu-item">
+                    <div class="edu-left">
+                        <h4>MSc IT &amp; Applied Security <span style="color:var(--accent);font-weight:400;">(Final Semester)</span></h4>
+                        <div class="school">Islington College</div>
+                        <div class="desc">Thesis: AI-driven Malware Detection System • Conducted vulnerability assessments and authored security reports</div>
+                    </div>
+                    <span class="edu-date">2024 – Present</span>
+                </div>
+
+                <div class="edu-item">
+                    <div class="edu-left">
+                        <h4>BSc (Hons) Computer Networking</h4>
+                        <div class="school">Islington College</div>
+                        <div class="desc">Projects: Library Management System, IoT Smart Parking &amp; Irrigation, Ethical Hacking, Cloud Computing (AWS), Cisco Networking</div>
+                    </div>
+                    <span class="edu-date">2019 – 2023</span>
+                </div>
+            </section>
+
+            <!-- Key Achievements Stats -->
+            <section class="main-section">
+                <h2><i class="fas fa-trophy"></i> Impact Snapshot</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="number">15+</div>
+                        <div class="label">Vulnerabilities Found</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">30%</div>
+                        <div class="label">Security Exposure Reduced</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">200+</div>
+                        <div class="label">Users Supported</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="number">60+</div>
+                        <div class="label">Students Taught</div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ===== FLOATING DOWNLOAD BUTTON ===== -->
+    <button class="download-btn" onclick="window.print()">
+        <i class="fas fa-file-pdf"></i> Download PDF
+    </button>
+
+    <script>
+        // Animate skill bars on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const fills = document.querySelectorAll('.skill-bar .fill');
+            fills.forEach((fill, index) => {
+                setTimeout(() => {
+                    fill.style.width = fill.style.getPropertyValue('--width');
+                }, 200 + index * 120);
+            });
+        });
+
+        // Smooth hover for stat cards
+        document.querySelectorAll('.stat-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = '#00d4ff';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'var(--glass-border)';
+            });
+        });
+    </script>
+
+</body>
+</html>
