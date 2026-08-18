@@ -6,16 +6,12 @@
     <title>Susant Lamichhane - Cybersecurity Professional</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Libraries for PDF generation -->
+    <!-- Libraries for high-quality PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         /* ===== RESET & BASE ===== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --primary: #0a1628;
@@ -42,12 +38,10 @@
                 radial-gradient(ellipse at 90% 80%, rgba(124, 58, 237, 0.06) 0%, transparent 50%);
         }
 
-        /* ===== SCROLLBAR ===== */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--primary); }
         ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
 
-        /* ===== MAIN CONTAINER ===== */
         .resume {
             max-width: 1200px;
             width: 100%;
@@ -73,7 +67,6 @@
             pointer-events: none;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             background: rgba(10, 22, 40, 0.8);
             padding: 40px 28px;
@@ -140,7 +133,6 @@
             margin-right: 6px;
         }
 
-        /* ===== SIDEBAR SECTIONS ===== */
         .sidebar-section {
             margin-bottom: 28px;
         }
@@ -161,7 +153,6 @@
             font-size: 13px;
         }
 
-        /* Contact */
         .contact-item {
             display: flex;
             align-items: center;
@@ -187,7 +178,6 @@
             font-size: 14px;
         }
 
-        /* Skills */
         .skill-group {
             margin-bottom: 14px;
         }
@@ -220,7 +210,6 @@
             width: var(--width);
         }
 
-        /* Languages */
         .lang-item {
             display: flex;
             justify-content: space-between;
@@ -234,7 +223,6 @@
             font-size: 12px;
         }
 
-        /* Interests */
         .tags {
             display: flex;
             flex-wrap: wrap;
@@ -259,7 +247,6 @@
             box-shadow: 0 6px 20px rgba(0, 212, 255, 0.25);
         }
 
-        /* ===== MAIN CONTENT ===== */
         .main {
             padding: 40px 44px;
             position: relative;
@@ -295,7 +282,6 @@
             background: linear-gradient(90deg, var(--accent), transparent);
         }
 
-        /* Summary */
         .summary-text {
             font-size: 15px;
             color: var(--text-light);
@@ -310,7 +296,6 @@
             color: var(--accent);
         }
 
-        /* Experience */
         .exp-item {
             padding: 20px 24px;
             background: var(--glass-bg);
@@ -379,7 +364,6 @@
             font-weight: 700;
         }
 
-        /* Education */
         .edu-item {
             display: flex;
             justify-content: space-between;
@@ -420,7 +404,6 @@
             white-space: nowrap;
         }
 
-        /* Stats */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -459,7 +442,6 @@
             margin-top: 2px;
         }
 
-        /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             .resume {
                 grid-template-columns: 1fr;
@@ -489,7 +471,6 @@
             .stat-card .number { font-size: 22px; }
         }
 
-        /* ===== PRINT STYLES (fallback) ===== */
         @media print {
             body { background: #fff; padding: 0; }
             .resume { box-shadow: none; border: 1px solid #ddd; border-radius: 0; }
@@ -500,7 +481,6 @@
             .skill-bar .fill { background: #333; }
         }
 
-        /* ===== FLOATING DOWNLOAD BUTTON ===== */
         .download-btn {
             position: fixed;
             bottom: 30px;
@@ -536,7 +516,6 @@
 <body>
 
     <div class="resume" id="resume">
-        <!-- ===== SIDEBAR ===== -->
         <aside class="sidebar">
             <div class="profile-header">
                 <div class="avatar">
@@ -547,7 +526,6 @@
                 <div class="location"><i class="fas fa-map-pin"></i> Kathmandu, Nepal</div>
             </div>
 
-            <!-- Contact -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-address-card"></i> Contact</h3>
                 <a href="mailto:lamichhanesusant7@gmail.com" class="contact-item">
@@ -567,7 +545,6 @@
                 </a>
             </div>
 
-            <!-- Skills -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-code"></i> Core Competencies</h3>
                 <div class="skill-group">
@@ -596,7 +573,6 @@
                 </div>
             </div>
 
-            <!-- Languages -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-language"></i> Languages</h3>
                 <div class="lang-item"><span>English</span><span class="level">Professional Working</span></div>
@@ -604,7 +580,6 @@
                 <div class="lang-item"><span>Hindi</span><span class="level">Conversational</span></div>
             </div>
 
-            <!-- Interests -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-heart"></i> Professional Interests</h3>
                 <div class="tags">
@@ -618,10 +593,7 @@
             </div>
         </aside>
 
-        <!-- ===== MAIN CONTENT ===== -->
         <main class="main">
-
-            <!-- Professional Summary -->
             <section class="main-section">
                 <h2><i class="fas fa-user-graduate"></i> Professional Summary</h2>
                 <div class="summary-text">
@@ -632,10 +604,8 @@
                 </div>
             </section>
 
-            <!-- Experience -->
             <section class="main-section">
                 <h2><i class="fas fa-briefcase"></i> Professional Experience</h2>
-
                 <div class="exp-item">
                     <div class="exp-header">
                         <div>
@@ -682,10 +652,8 @@
                 </div>
             </section>
 
-            <!-- Education -->
             <section class="main-section">
                 <h2><i class="fas fa-graduation-cap"></i> Education</h2>
-
                 <div class="edu-item">
                     <div class="edu-left">
                         <h4>MSc IT &amp; Applied Security <span style="color:var(--accent);font-weight:400;">(Final Semester)</span></h4>
@@ -705,7 +673,6 @@
                 </div>
             </section>
 
-            <!-- Key Achievements Stats -->
             <section class="main-section">
                 <h2><i class="fas fa-trophy"></i> Impact Snapshot</h2>
                 <div class="stats-grid">
@@ -727,78 +694,83 @@
                     </div>
                 </div>
             </section>
-
         </main>
     </div>
 
-    <!-- ===== FLOATING DOWNLOAD BUTTON ===== -->
     <button class="download-btn" id="downloadPdfBtn">
         <i class="fas fa-file-pdf"></i> Download PDF
     </button>
 
     <script>
-        // Animate skill bars on load
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate skill bars
             const fills = document.querySelectorAll('.skill-bar .fill');
             fills.forEach((fill, index) => {
                 setTimeout(() => {
                     fill.style.width = fill.style.getPropertyValue('--width');
                 }, 200 + index * 120);
             });
-        });
 
-        // PDF generation
-        document.getElementById('downloadPdfBtn').addEventListener('click', function() {
-            const btn = this;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-            btn.disabled = true;
+            // PDF generation (high quality, PNG, single page)
+            document.getElementById('downloadPdfBtn').addEventListener('click', function() {
+                const btn = this;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+                btn.disabled = true;
 
-            const resume = document.getElementById('resume');
+                const resume = document.getElementById('resume');
 
-            html2canvas(resume, {
-                scale: 2,               // high quality
-                backgroundColor: '#ffffff',
-                allowTaint: false,
-                useCORS: true,
-                logging: false,
-            }).then(canvas => {
-                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                const { jsPDF } = window.jspdf;
+                html2canvas(resume, {
+                    scale: 3,               // high resolution (crisp text)
+                    backgroundColor: '#ffffff',
+                    allowTaint: false,
+                    useCORS: true,
+                    logging: false,
+                    width: resume.scrollWidth,
+                    height: resume.scrollHeight,
+                    windowWidth: resume.scrollWidth,
+                    windowHeight: resume.scrollHeight,
+                }).then(canvas => {
+                    // Use PNG format (lossless, preserves colours and text)
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
 
-                // PDF dimensions: A4 (595.28 x 841.89 points)
-                const pdf = new jsPDF('p', 'pt', 'a4');
-                const pdfWidth = pdf.internal.pageSize.getWidth();
-                const pdfHeight = pdf.internal.pageSize.getHeight();
+                    // A4 dimensions in points (595.28 x 841.89)
+                    const pdf = new jsPDF('p', 'pt', 'a4');
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
 
-                // Calculate image aspect ratio
-                const imgWidth = canvas.width;
-                const imgHeight = canvas.height;
-                const ratio = imgWidth / imgHeight;
+                    // Calculate the aspect ratio
+                    const imgWidth = canvas.width;
+                    const imgHeight = canvas.height;
+                    const ratio = imgWidth / imgHeight;
 
-                // Fit image to page width or height, whichever is smaller
-                let finalWidth = pdfWidth;
-                let finalHeight = pdfWidth / ratio;
+                    // Fit the image exactly within the page (no margins)
+                    let finalWidth, finalHeight;
+                    if (ratio > pdfWidth / pdfHeight) {
+                        // Image is wider than page: fit to width
+                        finalWidth = pdfWidth;
+                        finalHeight = pdfWidth / ratio;
+                    } else {
+                        // Image is taller: fit to height
+                        finalHeight = pdfHeight;
+                        finalWidth = pdfHeight * ratio;
+                    }
 
-                // If height exceeds page height, fit to height
-                if (finalHeight > pdfHeight) {
-                    finalHeight = pdfHeight;
-                    finalWidth = pdfHeight * ratio;
-                }
+                    // Center the image horizontally and vertically
+                    const xOffset = (pdfWidth - finalWidth) / 2;
+                    const yOffset = (pdfHeight - finalHeight) / 2;
 
-                // Center the image on the page
-                const xOffset = (pdfWidth - finalWidth) / 2;
-                const yOffset = (pdfHeight - finalHeight) / 2;
+                    pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
+                    pdf.save('Susant_Lamichhane_Resume.pdf');
 
-                pdf.addImage(imgData, 'JPEG', xOffset, yOffset, finalWidth, finalHeight);
-                pdf.save('Susant_Lamichhane_Resume.pdf');
-
-                btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
-                btn.disabled = false;
-            }).catch(error => {
-                console.error('PDF generation failed:', error);
-                btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
-                btn.disabled = false;
-                alert('Could not generate PDF. Please try the print option instead (Ctrl+P).');
+                    btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                    btn.disabled = false;
+                }).catch(error => {
+                    console.error('PDF generation failed:', error);
+                    btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                    btn.disabled = false;
+                    alert('Could not generate PDF. Please try using the print option (Ctrl+P) and set scale to 47% to fit on one page.');
+                });
             });
         });
     </script>
