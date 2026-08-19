@@ -503,6 +503,20 @@
             .avatar { border-color: #333; }
             .skill-bar .fill { background: #333; }
             .download-btn { display: none; }
+            .profile-header h1 {
+                -webkit-text-fill-color: #0a1628;
+                background: none;
+                color: #0a1628;
+            }
+            .profile-header .title {
+                -webkit-text-fill-color: var(--accent);
+                color: var(--accent);
+            }
+            .stat-card .number {
+                -webkit-text-fill-color: var(--accent);
+                background: none;
+                color: var(--accent);
+            }
         }
 
         /* ===== FLOATING DOWNLOAD BUTTON ===== */
@@ -763,10 +777,25 @@
                 nameElement.style.webkitTextFillColor = '#00d4ff';
                 nameElement.style.color = '#00d4ff';
 
-                // === FIXED DESKTOP CAPTURE ===
-                // Force a desktop-like capture even on mobile
-                const fixedWidth = 1200;  // Match the max-width of .resume
-                const scale = 2;          // High quality
+                // Fixed desktop capture width
+                const fixedWidth = 1200;
+                const scale = 2;
+
+                // Set a timeout to fallback to print if generation takes too long
+                let fallbackTimer = setTimeout(() => {
+                    // If still generating after 10 seconds, abort and fallback to print
+                    console.warn('PDF generation timed out. Falling back to print.');
+                    // Revert name styles
+                    nameElement.style.background = originalBg || '';
+                    nameElement.style.webkitTextFillColor = originalWebkitFill || '';
+                    nameElement.style.color = originalColor || '';
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    // Trigger print fallback
+                    if (confirm('The PDF generation is taking too long. Would you like to open the print dialog to save as PDF instead?')) {
+                        window.print();
+                    }
+                }, 10000); // 10 seconds timeout
 
                 setTimeout(() => {
                     html2canvas(resume, {
@@ -780,7 +809,6 @@
                         windowWidth: fixedWidth,
                         windowHeight: (resume.scrollHeight / resume.scrollWidth) * fixedWidth,
                         onclone: function(doc) {
-                            // Ensure the cloned element uses fixed width
                             const cloned = doc.getElementById('resume');
                             if (cloned) {
                                 cloned.style.width = fixedWidth + 'px';
@@ -788,16 +816,18 @@
                             }
                         }
                     }).then(canvas => {
+                        // Clear the fallback timer since we succeeded
+                        clearTimeout(fallbackTimer);
+
                         // Revert name styles
                         nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
 
-                        // === GENERATE A4 PDF ===
+                        // Generate PDF
                         const imgData = canvas.toDataURL('image/png');
                         const { jsPDF } = window.jspdf;
 
-                        // A4 dimensions in points (595.28 x 841.89)
                         const pdf = new jsPDF('p', 'pt', 'a4');
                         const pdfWidth = pdf.internal.pageSize.getWidth();
                         const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -806,8 +836,7 @@
                         const imgHeight = canvas.height;
                         const ratio = imgWidth / imgHeight;
 
-                        // Calculate dimensions to fit exactly within A4 with margins
-                        const margin = 20; // 20pt margins
+                        const margin = 20;
                         const maxWidth = pdfWidth - (margin * 2);
                         const maxHeight = pdfHeight - (margin * 2);
 
@@ -820,14 +849,28 @@
                             finalWidth = maxHeight * ratio;
                         }
 
-                        // Center on page
                         const xOffset = (pdfWidth - finalWidth) / 2;
                         const yOffset = (pdfHeight - finalHeight) / 2;
 
                         pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
 
-                        // === SAVE AS CV.pdf ===
-                        pdf.save('CV.pdf');
+                        // Convert to Blob and open in new tab
+                        const pdfBlob = pdf.output('blob');
+                        const blobUrl = URL.createObjectURL(pdfBlob);
+
+                        // Open in new tab/window
+                        const newWindow = window.open(blobUrl, '_blank');
+                        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                            // Popup blocked, fallback to print
+                            alert('Popup was blocked. Please allow popups for this site or use the print fallback.');
+                            window.print();
+                        } else {
+                            // Successfully opened
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                            // Revoke blob URL after a delay to free memory
+                            setTimeout(() => { URL.revokeObjectURL(blobUrl); }, 10000);
+                        }
 
                         btn.innerHTML = originalText;
                         btn.disabled = false;
@@ -836,17 +879,12 @@
                         nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
-
+                        clearTimeout(fallbackTimer);
                         console.error('PDF generation failed:', error);
-
-                        // === FALLBACK: Try to open PDF in new tab ===
-                        try {
-                            // Use print as fallback (works in Facebook browser)
+                        // Fallback to print
+                        if (confirm('Could not generate PDF. Would you like to open the print dialog to save as PDF instead?')) {
                             window.print();
-                        } catch (e2) {
-                            alert('Could not generate PDF. Please try using your browser\'s print option (Ctrl+P) and select "Save as PDF".');
                         }
-
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     });
