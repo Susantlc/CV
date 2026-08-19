@@ -757,7 +757,7 @@
                 }, 200 + index * 120);
             });
 
-            // ===== PDF GENERATION =====
+            // ===== PDF GENERATION with RELIABLE FALLBACK =====
             document.getElementById('downloadPdfBtn').addEventListener('click', function() {
                 const btn = this;
                 const originalText = btn.innerHTML;
@@ -777,45 +777,35 @@
                 nameElement.style.webkitTextFillColor = '#00d4ff';
                 nameElement.style.color = '#00d4ff';
 
-                const fixedWidth = 1200;
-                const scale = 2;
+                // -----------------------------------------------------------------
+                // 1. Create a promise that resolves with the canvas
+                //    We use a simple capture without forced width/height to avoid 
+                //    hanging in embedded browsers.
+                // -----------------------------------------------------------------
+                const capturePromise = html2canvas(resume, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    allowTaint: false,
+                    useCORS: true,
+                    logging: false,
+                    // No fixed width/height – let it adapt to the element's natural size
+                });
 
-                // Timeout fallback to print if generation takes too long
-                let fallbackTimer = setTimeout(() => {
-                    console.warn('PDF generation timed out. Falling back to print.');
-                    nameElement.style.background = originalBg || '';
-                    nameElement.style.webkitTextFillColor = originalWebkitFill || '';
-                    nameElement.style.color = originalColor || '';
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                    window.print();
-                }, 12000);
+                // -----------------------------------------------------------------
+                // 2. Create a timeout promise that rejects after 12 seconds
+                // -----------------------------------------------------------------
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => {
+                        reject(new Error('PDF generation timed out'));
+                    }, 12000);
+                });
 
-                setTimeout(() => {
-                    html2canvas(resume, {
-                        scale: scale,
-                        backgroundColor: '#ffffff',
-                        allowTaint: false,
-                        useCORS: true,
-                        logging: false,
-                        width: fixedWidth,
-                        height: (resume.scrollHeight / resume.scrollWidth) * fixedWidth,
-                        windowWidth: fixedWidth,
-                        windowHeight: (resume.scrollHeight / resume.scrollWidth) * fixedWidth,
-                        onclone: function(doc) {
-                            const cloned = doc.getElementById('resume');
-                            if (cloned) {
-                                cloned.style.width = fixedWidth + 'px';
-                                cloned.style.maxWidth = fixedWidth + 'px';
-                            }
-                        }
-                    }).then(canvas => {
-                        clearTimeout(fallbackTimer);
-
-                        nameElement.style.background = originalBg || '';
-                        nameElement.style.webkitTextFillColor = originalWebkitFill || '';
-                        nameElement.style.color = originalColor || '';
-
+                // -----------------------------------------------------------------
+                // 3. Race them – whichever finishes first wins
+                // -----------------------------------------------------------------
+                Promise.race([capturePromise, timeoutPromise])
+                    .then(canvas => {
+                        // Success – generate PDF
                         const imgData = canvas.toDataURL('image/png');
                         const { jsPDF } = window.jspdf;
 
@@ -847,41 +837,42 @@
                         const pdfBlob = pdf.output('blob');
                         const blobUrl = URL.createObjectURL(pdfBlob);
 
-                        // Try to open in new tab
+                        // Try to open in new tab (will be blocked in Facebook)
                         const newWindow = window.open(blobUrl, '_blank');
-
-                        // If popup is blocked, fallback to print WITHOUT alert
                         if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                            // Popup blocked – fallback to print silently
+                            // Popup blocked → fallback to print without alert
                             btn.innerHTML = originalText;
                             btn.disabled = false;
-                            // Use a tiny delay to let the button reset before print dialog
+                            // Revert name styles
+                            nameElement.style.background = originalBg || '';
+                            nameElement.style.webkitTextFillColor = originalWebkitFill || '';
+                            nameElement.style.color = originalColor || '';
                             setTimeout(() => {
                                 window.print();
-                            }, 200);
+                            }, 300);
                         } else {
-                            // Successfully opened
+                            // Opened successfully
                             btn.innerHTML = originalText;
                             btn.disabled = false;
+                            nameElement.style.background = originalBg || '';
+                            nameElement.style.webkitTextFillColor = originalWebkitFill || '';
+                            nameElement.style.color = originalColor || '';
                             setTimeout(() => { URL.revokeObjectURL(blobUrl); }, 10000);
                         }
-
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }).catch(error => {
+                    })
+                    .catch(error => {
+                        // Timeout or capture error – reset button and fallback to print
+                        console.warn('PDF generation failed or timed out:', error);
                         nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
-                        clearTimeout(fallbackTimer);
-                        console.error('PDF generation failed:', error);
-                        // Fallback to print without alert
                         btn.innerHTML = originalText;
                         btn.disabled = false;
+                        // Trigger print fallback after a tiny delay so the button resets
                         setTimeout(() => {
                             window.print();
-                        }, 200);
+                        }, 300);
                     });
-                }, 200);
             });
         });
     </script>
