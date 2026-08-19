@@ -757,7 +757,7 @@
                 }, 200 + index * 120);
             });
 
-            // ===== PDF GENERATION with RELIABLE FALLBACK =====
+            // ===== PDF GENERATION with DIRECT DOWNLOAD (NO NEW TAB) =====
             document.getElementById('downloadPdfBtn').addEventListener('click', function() {
                 const btn = this;
                 const originalText = btn.innerHTML;
@@ -778,9 +778,7 @@
                 nameElement.style.color = '#00d4ff';
 
                 // -----------------------------------------------------------------
-                // 1. Create a promise that resolves with the canvas
-                //    We use a simple capture without forced width/height to avoid 
-                //    hanging in embedded browsers.
+                // Capture with a timeout fallback
                 // -----------------------------------------------------------------
                 const capturePromise = html2canvas(resume, {
                     scale: 2,
@@ -788,24 +786,17 @@
                     allowTaint: false,
                     useCORS: true,
                     logging: false,
-                    // No fixed width/height – let it adapt to the element's natural size
                 });
 
-                // -----------------------------------------------------------------
-                // 2. Create a timeout promise that rejects after 12 seconds
-                // -----------------------------------------------------------------
                 const timeoutPromise = new Promise((_, reject) => {
                     setTimeout(() => {
                         reject(new Error('PDF generation timed out'));
                     }, 12000);
                 });
 
-                // -----------------------------------------------------------------
-                // 3. Race them – whichever finishes first wins
-                // -----------------------------------------------------------------
                 Promise.race([capturePromise, timeoutPromise])
                     .then(canvas => {
-                        // Success – generate PDF
+                        // Generate PDF
                         const imgData = canvas.toDataURL('image/png');
                         const { jsPDF } = window.jspdf;
 
@@ -837,38 +828,50 @@
                         const pdfBlob = pdf.output('blob');
                         const blobUrl = URL.createObjectURL(pdfBlob);
 
-                        // Try to open in new tab (will be blocked in Facebook)
-                        const newWindow = window.open(blobUrl, '_blank');
-                        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                            // Popup blocked → fallback to print without alert
+                        // -------------------------------------------------------------
+                        // DIRECT DOWNLOAD via hidden anchor (No new tab, no empty page)
+                        // -------------------------------------------------------------
+                        try {
+                            const link = document.createElement('a');
+                            link.href = blobUrl;
+                            link.download = 'CV.pdf';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+
+                            // Reset UI and revert name
                             btn.innerHTML = originalText;
                             btn.disabled = false;
-                            // Revert name styles
                             nameElement.style.background = originalBg || '';
                             nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                             nameElement.style.color = originalColor || '';
+
+                            // Revoke the blob URL after a moment
+                            setTimeout(() => {
+                                URL.revokeObjectURL(blobUrl);
+                            }, 5000);
+                        } catch (e) {
+                            // If direct download fails, fallback to print
+                            console.warn('Direct download failed, falling back to print.', e);
+                            nameElement.style.background = originalBg || '';
+                            nameElement.style.webkitTextFillColor = originalWebkitFill || '';
+                            nameElement.style.color = originalColor || '';
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
                             setTimeout(() => {
                                 window.print();
                             }, 300);
-                        } else {
-                            // Opened successfully
-                            btn.innerHTML = originalText;
-                            btn.disabled = false;
-                            nameElement.style.background = originalBg || '';
-                            nameElement.style.webkitTextFillColor = originalWebkitFill || '';
-                            nameElement.style.color = originalColor || '';
-                            setTimeout(() => { URL.revokeObjectURL(blobUrl); }, 10000);
                         }
                     })
                     .catch(error => {
-                        // Timeout or capture error – reset button and fallback to print
+                        // Timeout or capture error
                         console.warn('PDF generation failed or timed out:', error);
                         nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
                         btn.innerHTML = originalText;
                         btn.disabled = false;
-                        // Trigger print fallback after a tiny delay so the button resets
+                        // Fallback to print
                         setTimeout(() => {
                             window.print();
                         }, 300);
