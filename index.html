@@ -777,25 +777,19 @@
                 nameElement.style.webkitTextFillColor = '#00d4ff';
                 nameElement.style.color = '#00d4ff';
 
-                // Fixed desktop capture width
                 const fixedWidth = 1200;
                 const scale = 2;
 
-                // Set a timeout to fallback to print if generation takes too long
+                // Timeout fallback to print if generation takes too long
                 let fallbackTimer = setTimeout(() => {
-                    // If still generating after 10 seconds, abort and fallback to print
                     console.warn('PDF generation timed out. Falling back to print.');
-                    // Revert name styles
                     nameElement.style.background = originalBg || '';
                     nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                     nameElement.style.color = originalColor || '';
                     btn.innerHTML = originalText;
                     btn.disabled = false;
-                    // Trigger print fallback
-                    if (confirm('The PDF generation is taking too long. Would you like to open the print dialog to save as PDF instead?')) {
-                        window.print();
-                    }
-                }, 10000); // 10 seconds timeout
+                    window.print();
+                }, 12000);
 
                 setTimeout(() => {
                     html2canvas(resume, {
@@ -816,15 +810,12 @@
                             }
                         }
                     }).then(canvas => {
-                        // Clear the fallback timer since we succeeded
                         clearTimeout(fallbackTimer);
 
-                        // Revert name styles
                         nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
 
-                        // Generate PDF
                         const imgData = canvas.toDataURL('image/png');
                         const { jsPDF } = window.jspdf;
 
@@ -853,40 +844,42 @@
                         const yOffset = (pdfHeight - finalHeight) / 2;
 
                         pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
-
-                        // Convert to Blob and open in new tab
                         const pdfBlob = pdf.output('blob');
                         const blobUrl = URL.createObjectURL(pdfBlob);
 
-                        // Open in new tab/window
+                        // Try to open in new tab
                         const newWindow = window.open(blobUrl, '_blank');
+
+                        // If popup is blocked, fallback to print WITHOUT alert
                         if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                            // Popup blocked, fallback to print
-                            alert('Popup was blocked. Please allow popups for this site or use the print fallback.');
-                            window.print();
+                            // Popup blocked – fallback to print silently
+                            btn.innerHTML = originalText;
+                            btn.disabled = false;
+                            // Use a tiny delay to let the button reset before print dialog
+                            setTimeout(() => {
+                                window.print();
+                            }, 200);
                         } else {
                             // Successfully opened
                             btn.innerHTML = originalText;
                             btn.disabled = false;
-                            // Revoke blob URL after a delay to free memory
                             setTimeout(() => { URL.revokeObjectURL(blobUrl); }, 10000);
                         }
 
                         btn.innerHTML = originalText;
                         btn.disabled = false;
                     }).catch(error => {
-                        // Revert styles on error
                         nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
                         clearTimeout(fallbackTimer);
                         console.error('PDF generation failed:', error);
-                        // Fallback to print
-                        if (confirm('Could not generate PDF. Would you like to open the print dialog to save as PDF instead?')) {
-                            window.print();
-                        }
+                        // Fallback to print without alert
                         btn.innerHTML = originalText;
                         btn.disabled = false;
+                        setTimeout(() => {
+                            window.print();
+                        }, 200);
                     });
                 }, 200);
             });
