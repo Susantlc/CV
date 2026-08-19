@@ -441,6 +441,7 @@
             margin-top: 2px;
         }
 
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 900px) {
             .resume {
                 grid-template-columns: 1fr;
@@ -470,16 +471,41 @@
             .stat-card .number { font-size: 22px; }
         }
 
+        /* ===== PRINT STYLES (A4) ===== */
         @media print {
-            body { background: #fff; padding: 0; }
-            .resume { box-shadow: none; border: 1px solid #ddd; border-radius: 0; }
-            .sidebar { background: #f5f7fa; }
+            body {
+                background: #fff;
+                padding: 0;
+                margin: 0;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .resume {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                border-radius: 0;
+                max-width: 100%;
+                display: block;
+            }
+            .sidebar {
+                background: #f5f7fa;
+                width: 30%;
+                float: left;
+                border-right: 1px solid #ddd;
+            }
+            .main {
+                width: 70%;
+                float: right;
+                padding: 30px;
+            }
             .stat-card:hover, .exp-item:hover, .tags span:hover { transform: none !important; }
             .tags span { background: #eee; border-color: #ddd; color: #333; }
             .avatar { border-color: #333; }
             .skill-bar .fill { background: #333; }
+            .download-btn { display: none; }
         }
 
+        /* ===== FLOATING DOWNLOAD BUTTON ===== */
         .download-btn {
             position: fixed;
             bottom: 30px;
@@ -515,6 +541,7 @@
 <body>
 
     <div class="resume" id="resume">
+        <!-- ===== SIDEBAR ===== -->
         <aside class="sidebar">
             <div class="profile-header">
                 <div class="avatar">
@@ -525,31 +552,27 @@
                 <div class="location"><i class="fas fa-map-pin"></i> Kathmandu, Nepal</div>
             </div>
 
-            <!-- ===== CONTACT ===== -->
+            <!-- Contact -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-address-card"></i> Contact</h3>
-                <!-- Email: Opens Gmail compose -->
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to=lamichhanesusant7@gmail.com" target="_blank" class="contact-item">
                     <i class="fas fa-envelope"></i> lamichhanesusant7@gmail.com
                 </a>
-                <!-- Phone -->
                 <a href="tel:+9779841512205" class="contact-item">
                     <i class="fas fa-phone"></i> +977 9841512205
                 </a>
-                <!-- LinkedIn -->
                 <a href="https://www.linkedin.com/in/susant-lamichhane-4a8828234/" target="_blank" class="contact-item">
                     <i class="fab fa-linkedin"></i> linkedin.com/in/susant-lamichhane-4a8828234
                 </a>
-                <!-- GitHub -->
                 <a href="https://github.com/susantlc" target="_blank" class="contact-item">
                     <i class="fab fa-github"></i> github.com/susantlc
                 </a>
-                <!-- Address: Opens Google Maps with Jorpati location -->
                 <a href="https://www.google.com/maps/search/?api=1&query=Jorpati+Kathmandu+Nepal" target="_blank" class="contact-item">
                     <i class="fas fa-map-marker-alt"></i> Jorpati, Kathmandu
                 </a>
             </div>
 
+            <!-- Skills -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-code"></i> Core Competencies</h3>
                 <div class="skill-group">
@@ -578,6 +601,7 @@
                 </div>
             </div>
 
+            <!-- Languages -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-language"></i> Languages</h3>
                 <div class="lang-item"><span>English</span><span class="level">Professional Working</span></div>
@@ -585,6 +609,7 @@
                 <div class="lang-item"><span>Hindi</span><span class="level">Conversational</span></div>
             </div>
 
+            <!-- Interests -->
             <div class="sidebar-section">
                 <h3><i class="fas fa-heart"></i> Professional Interests</h3>
                 <div class="tags">
@@ -598,6 +623,7 @@
             </div>
         </aside>
 
+        <!-- ===== MAIN CONTENT ===== -->
         <main class="main">
             <section class="main-section">
                 <h2><i class="fas fa-user-graduate"></i> Professional Summary</h2>
@@ -702,12 +728,14 @@
         </main>
     </div>
 
+    <!-- ===== DOWNLOAD BUTTON ===== -->
     <button class="download-btn" id="downloadPdfBtn">
-        <i class="fas fa-file-pdf"></i> Download PDF
+        <i class="fas fa-file-pdf"></i> Download CV.pdf
     </button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Animate skill bars
             const fills = document.querySelectorAll('.skill-bar .fill');
             fills.forEach((fill, index) => {
                 setTimeout(() => {
@@ -715,41 +743,61 @@
                 }, 200 + index * 120);
             });
 
+            // ===== PDF GENERATION =====
             document.getElementById('downloadPdfBtn').addEventListener('click', function() {
                 const btn = this;
+                const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
                 btn.disabled = true;
 
                 const resume = document.getElementById('resume');
                 const nameElement = document.getElementById('mainName');
 
-                const originalBackground = nameElement.style.background;
+                // Store original styles
+                const originalBg = nameElement.style.background;
                 const originalWebkitFill = nameElement.style.webkitTextFillColor;
                 const originalColor = nameElement.style.color;
 
+                // Temporarily change name to bright cyan for PDF visibility
                 nameElement.style.background = 'none';
                 nameElement.style.webkitTextFillColor = '#00d4ff';
                 nameElement.style.color = '#00d4ff';
 
+                // === FIXED DESKTOP CAPTURE ===
+                // Force a desktop-like capture even on mobile
+                const fixedWidth = 1200;  // Match the max-width of .resume
+                const scale = 2;          // High quality
+
                 setTimeout(() => {
                     html2canvas(resume, {
-                        scale: 3,
+                        scale: scale,
                         backgroundColor: '#ffffff',
                         allowTaint: false,
                         useCORS: true,
                         logging: false,
-                        width: resume.scrollWidth,
-                        height: resume.scrollHeight,
-                        windowWidth: resume.scrollWidth,
-                        windowHeight: resume.scrollHeight,
+                        width: fixedWidth,
+                        height: (resume.scrollHeight / resume.scrollWidth) * fixedWidth,
+                        windowWidth: fixedWidth,
+                        windowHeight: (resume.scrollHeight / resume.scrollWidth) * fixedWidth,
+                        onclone: function(doc) {
+                            // Ensure the cloned element uses fixed width
+                            const cloned = doc.getElementById('resume');
+                            if (cloned) {
+                                cloned.style.width = fixedWidth + 'px';
+                                cloned.style.maxWidth = fixedWidth + 'px';
+                            }
+                        }
                     }).then(canvas => {
-                        nameElement.style.background = originalBackground || '';
+                        // Revert name styles
+                        nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
 
+                        // === GENERATE A4 PDF ===
                         const imgData = canvas.toDataURL('image/png');
                         const { jsPDF } = window.jspdf;
 
+                        // A4 dimensions in points (595.28 x 841.89)
                         const pdf = new jsPDF('p', 'pt', 'a4');
                         const pdfWidth = pdf.internal.pageSize.getWidth();
                         const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -758,34 +806,51 @@
                         const imgHeight = canvas.height;
                         const ratio = imgWidth / imgHeight;
 
+                        // Calculate dimensions to fit exactly within A4 with margins
+                        const margin = 20; // 20pt margins
+                        const maxWidth = pdfWidth - (margin * 2);
+                        const maxHeight = pdfHeight - (margin * 2);
+
                         let finalWidth, finalHeight;
-                        if (ratio > pdfWidth / pdfHeight) {
-                            finalWidth = pdfWidth;
-                            finalHeight = pdfWidth / ratio;
+                        if (ratio > maxWidth / maxHeight) {
+                            finalWidth = maxWidth;
+                            finalHeight = maxWidth / ratio;
                         } else {
-                            finalHeight = pdfHeight;
-                            finalWidth = pdfHeight * ratio;
+                            finalHeight = maxHeight;
+                            finalWidth = maxHeight * ratio;
                         }
 
+                        // Center on page
                         const xOffset = (pdfWidth - finalWidth) / 2;
                         const yOffset = (pdfHeight - finalHeight) / 2;
 
                         pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
-                        pdf.save('Susant_Lamichhane_Resume.pdf');
 
-                        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+                        // === SAVE AS CV.pdf ===
+                        pdf.save('CV.pdf');
+
+                        btn.innerHTML = originalText;
                         btn.disabled = false;
                     }).catch(error => {
-                        nameElement.style.background = originalBackground || '';
+                        // Revert styles on error
+                        nameElement.style.background = originalBg || '';
                         nameElement.style.webkitTextFillColor = originalWebkitFill || '';
                         nameElement.style.color = originalColor || '';
 
                         console.error('PDF generation failed:', error);
-                        btn.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF';
+
+                        // === FALLBACK: Try to open PDF in new tab ===
+                        try {
+                            // Use print as fallback (works in Facebook browser)
+                            window.print();
+                        } catch (e2) {
+                            alert('Could not generate PDF. Please try using your browser\'s print option (Ctrl+P) and select "Save as PDF".');
+                        }
+
+                        btn.innerHTML = originalText;
                         btn.disabled = false;
-                        alert('Could not generate PDF. Please try using the print option (Ctrl+P) and set scale to 47%.');
                     });
-                }, 100);
+                }, 200);
             });
         });
     </script>
